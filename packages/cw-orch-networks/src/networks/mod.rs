@@ -3,6 +3,7 @@
 //! Contains information and helpers for different blockchain networks
 //! See [parse_network] to easily retrieve this static network information
 pub mod archway;
+pub mod bitsong;
 pub mod doravota;
 pub mod injective;
 pub mod juno;
@@ -20,6 +21,7 @@ pub mod xion;
 
 use crate::networks::union::UNION_TESTNET_8;
 pub use archway::{ARCHWAY_1, CONSTANTINE_3};
+pub use bitsong::{BITSONG_1, BOBNET};
 pub use cw_orch_core::environment::{ChainInfo, ChainKind, NetworkInfo};
 pub use doravota::{VOTA_ASH, VOTA_TESTNET};
 pub use injective::{INJECTIVE_1, INJECTIVE_888};
@@ -53,6 +55,7 @@ pub fn parse_network(net_id: &str) -> Result<ChainInfo, String> {
 }
 
 pub const SUPPORTED_NETWORKS: &[ChainInfo] = &[
+    BOBNET,
     UNI_6,
     JUNO_1,
     LOCAL_JUNO,
