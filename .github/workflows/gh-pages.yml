@@ -38,7 +38,7 @@ jobs:
 
       - name: Setup | Just
         id: just
-        uses: extractions/setup-just@v1
+        uses: extractions/setup-just@v2
 
       - name: Install static-sitemap-cli
         run: npm install static-sitemap-cli
