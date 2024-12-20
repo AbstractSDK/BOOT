@@ -26,7 +26,7 @@ pub const UNION_TESTNET_9: ChainInfo = ChainInfo {
     chain_id: "union-testnet-9",
     gas_denom: "muno",
     gas_price: 0.000025,
-    grpc_urls: &["https://grpc.union-testnet-9.cor.systems:443"],
+    grpc_urls: &["https://grpc.testnet-9.union.build:443", "https://grpc.union-testnet-9.cor.systems:443"],
     network_info: UNION_NETWORK,
     lcd_url: None,
     fcd_url: None,

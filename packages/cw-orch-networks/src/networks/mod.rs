@@ -20,7 +20,7 @@ pub mod union;
 pub mod xion;
 
 #[allow(deprecated)]
-use crate::networks::union::UNION_TESTNET_8;
+use crate::networks::union::{UNION_TESTNET_8, UNION_TESTNET_9};
 pub use archway::{ARCHWAY_1, CONSTANTINE_3};
 pub use cosmos::COSMOS_HUB_TESTNET;
 pub use cw_orch_core::environment::{ChainInfo, ChainKind, NetworkInfo};
@@ -86,5 +86,6 @@ pub const SUPPORTED_NETWORKS: &[ChainInfo] = &[
     LOCAL_LANDSLIDE,
     #[allow(deprecated)]
     UNION_TESTNET_8,
+    UNION_TESTNET_9,
     COSMOS_HUB_TESTNET,
 ];
