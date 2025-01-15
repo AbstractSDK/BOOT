@@ -1,10 +1,16 @@
 use std::{cell::RefCell, fmt::Debug, io::Read, rc::Rc};
 
+use clone_cw_multi_test::tokenfactory::TokenFactoryStargate;
+use clone_cw_multi_test::wasm_emulation::query::ContainsRemote;
 use clone_cw_multi_test::{
-    addons::{MockAddressGenerator, MockApiBech32},
     wasm_emulation::{channel::RemoteChannel, storage::analyzer::StorageAnalyzer},
     App, AppBuilder, BankKeeper, Contract, Executor, WasmKeeper,
 };
+use clone_cw_multi_test::{
+    DistributionKeeper, FailingModule, GovFailingModule, IbcFailingModule, MockApiBech32,
+    StakeKeeper,
+};
+use cosmwasm_std::testing::MockStorage;
 use cosmwasm_std::{
     to_json_binary, Addr, BankMsg, Binary, Coin, CosmosMsg, Empty, Event, StdError, StdResult,
     Uint128, WasmMsg,
@@ -26,7 +32,18 @@ use crate::{contract::CloneTestingContract, queriers::bank::CloneBankQuerier};
 
 use super::state::MockState;
 
-pub type CloneTestingApp = App<BankKeeper, MockApiBech32>;
+pub type CloneTestingApp = App<
+    BankKeeper,
+    MockApiBech32,
+    MockStorage,
+    FailingModule<Empty, Empty, Empty>,
+    WasmKeeper<Empty, Empty>,
+    StakeKeeper,
+    DistributionKeeper,
+    IbcFailingModule,
+    GovFailingModule,
+    TokenFactoryStargate,
+>;
 
 /// Wrapper around a cw-multi-test [`App`](cw_multi_test::App) backend.
 ///
@@ -77,9 +94,20 @@ pub struct CloneTesting<S: StateInterface = MockState> {
 }
 
 impl CloneTesting {
-    /// Ceates a new valid account
-    pub fn init_account(&self) -> Addr {
-        self.app.borrow_mut().next_address()
+    /// Creates a new valid account
+    pub fn addr_make(&self, account_name: impl Into<String>) -> Addr {
+        self.app.borrow().api().addr_make(&account_name.into())
+    }
+
+    pub fn addr_make_with_balance(
+        &self,
+        account_name: impl Into<String>,
+        balance: Vec<Coin>,
+    ) -> Result<Addr, CwEnvError> {
+        let addr = self.app.borrow().api().addr_make(&account_name.into());
+        self.set_balance(&addr, balance)?;
+
+        Ok(addr)
     }
 
     /// Set the bank balance of an address.
@@ -154,6 +182,7 @@ impl CloneTesting {
         let code_id = self.app.borrow_mut().store_wasm_code(wasm);
 
         contract.set_code_id(code_id);
+        println!("{code_id}");
 
         // add contract code_id to events manually
         let mut event = Event::new("store_code");
@@ -229,9 +258,7 @@ impl<S: StateInterface> CloneTesting<S> {
         )
         .unwrap();
 
-        let wasm = WasmKeeper::<Empty, Empty>::new()
-            .with_remote(remote_channel.clone())
-            .with_address_generator(MockAddressGenerator);
+        let wasm = WasmKeeper::<Empty, Empty>::new().with_remote(remote_channel.clone());
 
         let bank = BankKeeper::new().with_remote(remote_channel.clone());
 
@@ -247,10 +274,11 @@ impl<S: StateInterface> CloneTesting<S> {
             .with_bank(bank)
             .with_api(MockApiBech32::new(&pub_address_prefix))
             .with_block(block_info)
-            .with_remote(remote_channel.clone());
+            .with_remote(remote_channel.clone())
+            .with_stargate(TokenFactoryStargate);
 
-        let app = Rc::new(RefCell::new(app.build(|_, _, _| {})?));
-        let sender = app.borrow_mut().next_address();
+        let app = Rc::new(RefCell::new(app.build(|_, _, _| {})));
+        let sender = app.borrow().api().addr_make("sender");
 
         Ok(Self {
             chain,
@@ -573,7 +601,7 @@ mod test {
         let chain = CloneTesting::new(chain_info)?;
 
         let sender = chain.sender_addr();
-        let recipient = &chain.init_account();
+        let recipient = &chain.addr_make("recipient");
 
         chain
             .set_balance(recipient, vec![Coin::new(amount, denom)])
@@ -657,7 +685,7 @@ mod test {
         let mock_state = MockState::new(JUNO_1.into(), "default_id");
 
         let chain: CloneTesting = CloneTesting::<_>::new_custom(&rt, chain, mock_state)?;
-        let recipient = chain.init_account();
+        let recipient = chain.addr_make("recipient");
 
         chain
             .set_balances(&[(&recipient, &[Coin::new(amount, denom)])])
@@ -705,7 +733,7 @@ mod test {
         let chain_info = JUNO_1;
 
         let chain = CloneTesting::new(chain_info)?;
-        let recipient = &chain.init_account();
+        let recipient = &chain.addr_make("recipient");
 
         chain
             .add_balance(recipient, vec![Coin::new(amount, denom_1)])

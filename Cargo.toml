@@ -32,7 +32,8 @@ cosmwasm-std     = { version = "2.1" }
 cw-storage-plus  = { version = "2.0.0" }
 cw-utils         = { version = "2.0.0" }
 
-cw-multi-test = { package = "abstract-cw-multi-test", version = "2.0.2", features = ["cosmwasm_1_2"] }
+# cw-multi-test = { package = "abstract-cw-multi-test", version = "2.0.2", features = ["cosmwasm_1_2"] }
+cw-multi-test = { package = "abstract-cw-multi-test", git = "https://github.com/abstractsdk/cw-multi-test-fork", branch = "token-factory-integration", version = "2.0.2", features = ["cosmwasm_1_2", "tokenfactory"] }
 cw20          = { version = "2.0.0" }
 cw20-base     = { version = "2.0.0" }
 

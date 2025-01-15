@@ -5,7 +5,7 @@ edition.workspace    = true
 license.workspace    = true
 name                 = "cw-orch-clone-testing"
 repository.workspace = true
-version              = "0.9.2"
+version              = "0.10.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -16,7 +16,9 @@ cw-orch-core   = { workspace = true }
 cw-orch-daemon = { workspace = true }
 cw-orch-mock   = { workspace = true }
 
-clone-cw-multi-test = { version = "0.6.1" }
+# clone-cw-multi-test = { version = "0.7.0" }
+# clone-cw-multi-test = { path = "../../../cw-multi-test-fork", features = ["cosmwasm_1_2", "tokenfactory", "staking"] }
+clone-cw-multi-test = { git = "https://github.com/abstractsdk/cw-multi-test-fork", branch = "adapt_for_local_execution", features = ["cosmwasm_1_2", "stargate", "tokenfactory", "staking"] }
 
 anyhow    = { workspace = true }
 cw-utils  = { workspace = true }

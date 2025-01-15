@@ -6,7 +6,7 @@ use cosmwasm_std::{
 };
 use cw_multi_test::{
     ibc::IbcSimpleModule, App, AppResponse, BankKeeper, Contract, DistributionKeeper, Executor,
-    FailingModule, GovFailingModule, MockApiBech32, StakeKeeper, StargateFailing, WasmKeeper,
+    FailingModule, GovFailingModule, MockApiBech32, StakeKeeper, TokenFactoryStargate, WasmKeeper,
 };
 use serde::Serialize;
 
@@ -27,7 +27,7 @@ pub type MockApp<A = MockApi> = App<
     DistributionKeeper,
     IbcSimpleModule,
     GovFailingModule,
-    StargateFailing,
+    TokenFactoryStargate,
 >;
 
 /// Wrapper around a cw-multi-test [`App`](cw_multi_test::App) backend.

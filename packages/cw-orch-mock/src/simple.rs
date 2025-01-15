@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use cosmwasm_std::testing::MockApi;
 use cosmwasm_std::{Addr, Coin, Uint128};
-use cw_multi_test::AppBuilder;
+use cw_multi_test::{AppBuilder, TokenFactoryStargate};
 use cw_orch_core::environment::{BankQuerier, BankSetter, TxHandler};
 use cw_orch_core::{
     environment::{DefaultQueriers, StateInterface},
@@ -105,7 +105,9 @@ impl<S: StateInterface> Mock<S> {
     /// The state is customizable by implementing the `StateInterface` trait on a custom struct and providing it on the custom constructor.
     pub fn new_custom(sender: impl Into<String>, custom_state: S) -> Self {
         let state = Rc::new(RefCell::new(custom_state));
-        let app = AppBuilder::new_custom().build(|_, _, _| {});
+        let app = AppBuilder::new_custom()
+            .with_stargate(TokenFactoryStargate)
+            .build(|_, _, _| {});
         let sender: String = sender.into();
         let sender = app.api().addr_make(&sender);
         let app = Rc::new(RefCell::new(app));
