@@ -40,7 +40,7 @@ This environment mocks the actual on-chain execution exactly.
 
 > - This environment uses the actual functions of your contract **without** having to compile them into WASM. When you are calling `upload` with this environment, no wasm files are included in the test environment. This allows for better debugging of your contract code.
 >
-> - You will need to have implemented the `wrapper` function for interacting the the `Mock` environment. This function will allow you to "connect" your contract endpoints to your `Contract` struct. [See the dedicated page for more details](../contracts/interfaces.md#creating-an-interface).
+> - You will need to have implemented the `wrapper` function for interacting the `Mock` environment. This function will allow you to "connect" your contract endpoints to your `Contract` struct. [See the dedicated page for more details](../contracts/interfaces.md#creating-an-interface).
 >
 > - **_NOTE:_** Keep in mind that `cw-multi-test` is based solely in rust and that a lot of actual blockchain modules are not mocked in the environment. The main cosmos modules are there (Bank, Staking), but some very useful ones (tokenfactory, ibc) as well as Stargate messages are not supported by the environment.
 
